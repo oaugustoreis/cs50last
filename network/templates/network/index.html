@@ -1,0 +1,15 @@
+{% extends 'network/layout.html' %}
+
+{% block body %}
+  <h1>All Posts</h1>
+  {% if user.is_authenticated %}
+    <form action="{% url 'new_post' %}" method="post">
+      {% csrf_token %}
+      <div class="rounded my-3 mx-5 border py-2 px-3">
+        <h3>New Post</h3>
+        <textarea name="content" class="form-control my-2" placeholder="Leave a comment here"></textarea>
+        <button type="submit" class="btn btn-primary">Post</button>
+      </div>
+    </form>
+  {% endif %}
+{% endblock %}
