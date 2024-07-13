@@ -1,0 +1,14 @@
+.all-posts p:last-child {
+    font-size: 14px;
+    color: rgb(126, 126, 126);
+}
+
+.all-posts p {
+    font-size: 24px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
