@@ -18,7 +18,24 @@ def index(request):
         "allPosts": allPosts,
     })
 def following(request):
-    return
+    currentUser = User.objects.get(pk=request.user.id)
+    followingP = Follow.objects.filter(user=currentUser)
+    allPosts = Post.objects.all().order_by('id').reverse()
+    
+    following_posts=[]
+    for post in allPosts:
+        for follow in followingP:
+            if follow.user_follow == post.author:
+                following_posts.append(post)
+
+    paginator = Paginator(following_posts, 10)
+    following_posts = paginator.get_page(request.GET.get('page'))
+
+
+    return render(request, "network/following.html",{
+        "allPosts": following_posts,
+    })
+
 def profile_page(request,user_id):
     author = User.objects.get(pk=user_id)
     myPosts = Post.objects.filter(author=user_id).order_by("id").reverse()
