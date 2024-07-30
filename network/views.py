@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
-
+import json
 from .models import User, Post, Follow
 
 
@@ -35,6 +35,14 @@ def following(request):
     return render(request, "network/following.html",{
         "allPosts": following_posts,
     })
+
+def edit_post(request, post_id):
+    if request.method == 'POST':
+        data= json.loads(request.body)
+        edit = Post.objects.get(pk= post_id)
+        edit.content = data["content"]
+        edit.save()
+        return JsonResponse({"message":"Change succesful", "data": data["content"]})
 
 def profile_page(request,user_id):
     author = User.objects.get(pk=user_id)
