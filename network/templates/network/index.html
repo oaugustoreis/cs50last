@@ -11,7 +11,7 @@
 
   function submit(id) {
     const contentArea = document.getElementById(`textarea_${id}`).value
-    const content = document.getElementById(`content_${id}`)
+    const content = document.getElementById(`content_text${id}`)
     const modal = document.getElementById(`modal_edit${id}`)
     fetch(`/edit_post/${id}`, {
       method: "POST",
@@ -23,6 +23,7 @@
       .then(response => response.json())
       .then(result => {
         content.innerHTML = result.data
+
         modal.classList.remove('show')
         modal.setAttribute('aria-hidden', 'true')
         modal.setAttribute('style', 'display:none')
@@ -41,7 +42,7 @@
   {% csrf_token %}
   <div class="rounded my-3 mx-5 border py-2 px-3">
     <h3>New Post</h3>
-    <textarea name="content" id="content_{{post.id}}" class="form-control my-2"
+    <textarea name="content" class="form-control my-2"
       placeholder="Leave a comment here"></textarea>
     <button type="submit" class="btn btn-primary">Post</button>
   </div>
@@ -53,12 +54,12 @@
   <div class="post-card rounded my-3 mx-5 border py-2 px-3">
     <h3><a href="{% url 'profile' user_id=post.author.id %}">{{ post.author }}</a></h3>
 
-    <p>{{ post.content }}</p>
+    <p  id="content_text{{post.id}}" >{{ post.content }} </p>
     <p>{{ post.date }}</p>
 
     {% if user.is_authenticated %}
     {% if user == post.author %}
-    <div class="">
+    <div>
       <button class="btn btn-primary" data-toggle="modal" data-target="#modal_edit{{post.id}}">Edit</button>
     </div>
     <div class="modal" id="modal_edit{{post.id}}" tabindex="-1" role="dialog"
