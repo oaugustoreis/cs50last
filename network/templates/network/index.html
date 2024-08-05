@@ -6,9 +6,8 @@
   function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    if (parts.length == 2) return parts.pop().split(';').shift();
   }
-
   function submit(id) {
     const contentArea = document.getElementById(`textarea_${id}`).value
     const content = document.getElementById(`content_text${id}`)
@@ -33,6 +32,38 @@
         }
       })
   }
+  var liked = new Boolean(false);
+  function likeHandler(id, whoYouLiked) {
+    console.log("Array",whoYouLiked.length);
+    var btn = document.getElementById(`${id}`);
+    btn.classList.remove('fa-thumbs-up')
+    btn.classList.remove('fa-thumbs-down')
+
+    if (whoYouLiked.length >2 ) {
+      var liked = true;
+    } else {
+      var liked = false;
+    }
+
+    if (liked === true) {
+      fetch(`/remove_like/${id}`)
+        .then(response => response.json)
+        .then(result => {
+          btn.classList.add('fa-thumbs-up')
+          btn.classList.add('btn-primary')
+        })
+    } else {
+      fetch(`/add_like/${id}`)
+        .then(response => response.json)
+        .then(result => {
+          btn.classList.add('fa-thumbs-down')
+          btn.classList.add('btn-danger')
+        })
+    }
+    liked=!liked
+    console.log(whoYouLiked);
+
+  }
 
 </script>
 
@@ -42,8 +73,7 @@
   {% csrf_token %}
   <div class="rounded my-3 mx-5 border py-2 px-3">
     <h3>New Post</h3>
-    <textarea name="content" class="form-control my-2"
-      placeholder="Leave a comment here"></textarea>
+    <textarea name="content" class="form-control my-2" placeholder="Leave a comment here"></textarea>
     <button type="submit" class="btn btn-primary">Post</button>
   </div>
 </form>
@@ -54,7 +84,7 @@
   <div class="post-card rounded my-3 mx-5 border py-2 px-3">
     <h3><a href="{% url 'profile' user_id=post.author.id %}">{{ post.author }}</a></h3>
 
-    <p  id="content_text{{post.id}}" >{{ post.content }} </p>
+    <p id="content_text{{post.id}}">{{ post.content }} </p>
     <p>{{ post.date }}</p>
 
     {% if user.is_authenticated %}
@@ -82,6 +112,14 @@
         </div>
       </div>
     </div>
+    {% else %}
+    {% if post.id in whoYouLiked %}
+    <button class="btn btn-danger fa fa-thumbs-down col-1" onclick="likeHandler('{{ post.id }}', '{{ whoYouLiked }}')"
+      id="{{ post.id }}"></button>
+    {% else %}
+    <button class="btn btn-primary fa fa-thumbs-up col-1" onclick="likeHandler('{{ post.id }}', '{{ whoYouLiked }}')"
+      id="{{ post.id }}"></button>
+    {% endif %}
     {% endif %}
     {% endif %}
   </div>

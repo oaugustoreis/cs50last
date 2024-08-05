@@ -5,17 +5,48 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 import json
-from .models import User, Post, Follow
+from .models import User, Post, Follow, Liked
 
 
+
+def remove_like(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    user = User.objects.get(pk=request.user.id)
+    like = Liked.objects.filter(user=user, post=post)
+    like.delete()
+    return JsonResponse({"message": "Like removed!"})
+
+
+def add_like(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    user = User.objects.get(pk=request.user.id)
+    like = Liked.objects.filter(user=user, post=post)
+    if like.exists():
+       like.delete()
+    else:
+        newLike = Liked(user=user, post=post)
+        newLike.save()
+        return JsonResponse({"message": "Like adicionado!"})
+
+                        
 def index(request):
     allPosts = Post.objects.all().order_by("id").reverse()
     paginator = Paginator(allPosts, 10)
     allPosts = paginator.get_page(request.GET.get('page'))
 
+    allLikes = Liked.objects.all()
+
+    whoYouLiked = []
+    try:
+        for like in allLikes:
+            if like.user.id == request.user.id:
+                whoYouLiked.append(like.post.id)
+    except:
+        whoYouLiked = []
 
     return render(request, "network/index.html",{
         "allPosts": allPosts,
+        "whoYouLiked":whoYouLiked
     })
 def following(request):
     currentUser = User.objects.get(pk=request.user.id)
