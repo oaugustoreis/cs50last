@@ -34,15 +34,22 @@
   }
   var liked = new Boolean(false);
   function likeHandler(id, whoYouLiked) {
-    console.log("Array",whoYouLiked.length);
+
     var btn = document.getElementById(`${id}`);
+    console.log(id);
     btn.classList.remove('fa-thumbs-up')
     btn.classList.remove('fa-thumbs-down')
+    btn.classList.remove('btn-primary')
+    btn.classList.remove('btn-danger')
 
-    if (whoYouLiked.length >2 ) {
+    if (whoYouLiked.indexOf(id) === 1 ) {
       var liked = true;
+      console.log("True",id);
+      console.log(whoYouLiked.indexOf(id));
     } else {
-      var liked = false;
+      console.log("False",id);
+      console.log(whoYouLiked.indexOf(id));
+      liked = false;
     }
 
     if (liked === true) {
@@ -61,7 +68,19 @@
         })
     }
     liked=!liked
-    console.log(whoYouLiked);
+
+  }
+  function likeHandler1(id, whoYouLiked) {
+    
+    if (whoYouLiked.indexOf(id) === 1 ) {
+      // var liked = true;
+      console.log("True",id);
+      console.log(whoYouLiked.indexOf(id));
+    } else {
+      console.log("False",id);
+      console.log(whoYouLiked.indexOf(id));
+      // var liked = false;
+    }
 
   }
 

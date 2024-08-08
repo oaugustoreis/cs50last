@@ -23,6 +23,8 @@ def add_like(request, post_id):
     like = Liked.objects.filter(user=user, post=post)
     if like.exists():
        like.delete()
+       return JsonResponse({"message": "Like exists!"})
+
     else:
         newLike = Liked(user=user, post=post)
         newLike.save()
@@ -42,7 +44,7 @@ def index(request):
             if like.user.id == request.user.id:
                 whoYouLiked.append(like.post.id)
     except:
-        whoYouLiked = []
+        return JsonResponse({"message": "Like adicionado!"})
 
     return render(request, "network/index.html",{
         "allPosts": allPosts,
